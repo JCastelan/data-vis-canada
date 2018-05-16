@@ -4,7 +4,8 @@ var w = 750;
 var h = 500;
 
 //Define map projection
-var projection = d3.geoMercator().translate([w, h+170]).scale([230]);
+//var projection = d3.geoMercator().translate([w, h+170]).scale([230]);
+var projection = d3.geoAlbers().scale([700]).translate([w/2,h+45]).parallels([50,70])
 
 //Define path generator
 var path = d3.geoPath()
