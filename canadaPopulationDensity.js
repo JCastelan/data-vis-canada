@@ -13,9 +13,10 @@ var path = d3.geoPath()
 
 //Define quantize scale to sort data values into buckets of color
 var colorList = ["rgb(237,248,233)","rgb(186,228,179)","rgb(116,196,118)","rgb(49,163,84)","rgb(0,109,44)"];
-var color = d3.scaleQuantize()
-                    .range(colorList);
-                    //Colors taken from colorbrewer.js, included in the D3 download
+var color = d3.scaleQuantize().range(colorList);
+
+var colorList2 = ["rgb(237,248,233)","rgb(186,228,179)","rgb(116,196,118)","rgb(49,163,84)","rgb(0,109,44)"];
+var color2 = d3.scaleThreshold().range(colorList2);
 
 //Number formatting for population values
 var formatAsThousands = d3.format(",");  //e.g. converts 123456 to "123,456"
@@ -38,7 +39,7 @@ function defaultData(){
 //Load in population data
 d3.csv("canadaPopulation2016simple.csv", function(error, data) {
     svg.selectAll("path").remove();
-    
+    document.getElementById("title").innerHTML = "Canada Population Density, 2016";
     if(error) throw error;
     data.forEach( function(d){
         d.value = +d.value;
@@ -49,11 +50,11 @@ d3.csv("canadaPopulation2016simple.csv", function(error, data) {
     
     //console.log(d3.extent( data, function(d) { return d.popDensity;}));
     //Set input domain for color scale
-    color.domain(d3.extent( data, function(d) { return d.popDensity;})
-        /*[
-        d3.min(data, function(d) { return d.population; }), 
-        d3.max(data, function(d) { return d.population; })
-    ]*/);
+    var bounds = d3.extent( data, function(d) { return d.popDensity;})
+    color.domain(bounds);
+    var x = d3.scaleSqrt()
+              .domain([0, 4500])
+            .rangeRound([440, 950]);
 
     //Load in GeoJSON data
     d3.json("canada.json", function(json) {
@@ -116,6 +117,8 @@ d3.csv("canadaPopulation2016simple.csv", function(error, data) {
 
     });
 
+    
+    
     var legendX = 30;
     var legendY = h-70;
     svg.append("rect")
@@ -171,7 +174,7 @@ d3.csv("canadaPopulation2016simple.csv", function(error, data) {
         .attr("x", legendX+50)
         .attr("y", legendY+20)
         .style("text-anchor", "start")
-        .text("~6");
+        .text("~10");
     svg.append("text")
         .attr("class", "label")
         .attr("x", legendX+90)
@@ -200,9 +203,10 @@ d3.csv("canadaPopulation2016simple.csv", function(error, data) {
 };
 
 function otherData(){
+    document.getElementById("title").innerHTML = "Number of Police Officers, 2016";
     console.log("help");
     svg.selectAll("path").remove();
-    d3.csv("CanadaBirths2016simple.csv", function(error, data) {
+    d3.csv("CanadaPoliceOfficers2016simple.csv", function(error, data) {
     
     if(error) throw error;
     data.forEach( function(d){
@@ -214,11 +218,7 @@ function otherData(){
     
     //console.log(d3.extent( data, function(d) { return d.value;}));
     //Set input domain for color scale
-    color.domain(d3.extent( data, function(d) { return d.value;})
-        /*[
-        d3.min(data, function(d) { return d.population; }), 
-        d3.max(data, function(d) { return d.population; })
-    ]*/);
+    color2.domain([5000,10000,15000,20000, 25000]);
 
     //Load in GeoJSON data
     d3.json("canada.json", function(json) {
@@ -258,7 +258,7 @@ function otherData(){
 
                 if (value) {
                     //If value exists…
-                    return color(value);
+                    return color2(value);
                 } else {
                     //If value is undefined…
                     return "black";
@@ -268,7 +268,7 @@ function otherData(){
                 .duration(200)
                 .style("opacity", .95);
             div.html( "<b>"+d.properties.Name+
-                     "</br>Population Density: "+ d.properties.value+"</b>")
+                     "</br>Number of Police Officers: "+ d.properties.value+"</b>")
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY) + "px");
        })
@@ -281,6 +281,8 @@ function otherData(){
 
     });
 
+        
+    
     var legendX = 30;
     var legendY = h-70;
     svg.append("rect")
@@ -295,71 +297,71 @@ function otherData(){
         .attr("y", legendY)
         .attr("width", 40)
         .attr("height", 30)
-        .attr("fill", colorList[0])
+        .attr("fill", colorList2[0])
         .style("stroke-size", "1px");
     svg.append("rect")
         .attr("x", legendX+40)
         .attr("y", legendY)
         .attr("width", 40)
         .attr("height", 30)
-        .attr("fill", colorList[1])
+        .attr("fill", colorList2[1])
         .style("stroke-size", "1px");
     svg.append("rect")
         .attr("x", legendX+80)
         .attr("y", legendY)
         .attr("width", 40)
         .attr("height", 30)
-        .attr("fill", colorList[2])
+        .attr("fill", colorList2[2])
         .style("stroke-size", "1px");
     svg.append("rect")
         .attr("x", legendX+120)
         .attr("y", legendY)
         .attr("width", 40)
         .attr("height", 30)
-        .attr("fill", colorList[3])
+        .attr("fill", colorList2[3])
         .style("stroke-size", "1px");
     svg.append("rect")
         .attr("x", legendX+160)
         .attr("y", legendY)
         .attr("width", 40)
         .attr("height", 30)
-        .attr("fill", colorList[4])
+        .attr("fill", colorList2[4])
         .style("stroke-size", "1px");
     svg.append("text")
         .attr("class", "label")
         .attr("x", legendX+3)
         .attr("y", legendY+20)
         .style("text-anchor", "start")
-        .text("≤ 40k");
+        .text("≤ 5k");
     svg.append("text")
         .attr("class", "label")
-        .attr("x", legendX+50)
+        .attr("x", legendX+45)
         .attr("y", legendY+20)
         .style("text-anchor", "start")
-        .text("");
+        .text("~10k");
     svg.append("text")
         .attr("class", "label")
-        .attr("x", legendX+90)
+        .attr("x", legendX+85)
         .attr("y", legendY+20)
         .style("text-anchor", "start")
-        .text("");
+        .text("~15k");
     svg.append("text")
         .attr("class", "label")
-        .attr("x", legendX+130)
+        .attr("x", legendX+125)
         .attr("y", legendY+20)
         .style("text-anchor", "start")
-        .text("");
+        .text("~20k");
     svg.append("text")
         .attr("class", "label")
-        .attr("x", legendX+170)
+        .attr("x", legendX+165)
         .attr("y", legendY+20)
         .style("text-anchor", "start")
-        .text("");
+        .text("~25k");
     svg.append("text")
         .attr("class", "label")
         .attr("x", legendX+100)
         .attr("y", legendY+50)
         .style("text-anchor", "middle")
-        .text("Number of births");
+        .text("Number of Police Officers");
     });  
 };
