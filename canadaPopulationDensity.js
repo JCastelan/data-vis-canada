@@ -37,10 +37,9 @@ defaultData();
 
 function defaultData(){
 //Load in population data
-d3.csv("canadaPopulation2016simple.csv", function(error, data) {
+d3.csv("canadaPopulation2016simple.csv", function( data) {
     svg.selectAll("path").remove();
     document.getElementById("title").innerHTML = "Canada Population Density, 2016";
-    if(error) throw error;
     data.forEach( function(d){
         d.value = +d.value;
         d.area = +d.area; //in km squared
@@ -206,9 +205,7 @@ function otherData(){
     document.getElementById("title").innerHTML = "Number of Police Officers, 2016";
     console.log("help");
     svg.selectAll("path").remove();
-    d3.csv("CanadaPoliceOfficers2016simple.csv", function(error, data) {
-    
-    if(error) throw error;
+    d3.csv("CanadaPoliceOfficers2016simple.csv", function( data) {
     data.forEach( function(d){
         d.value = +d.value;
         //d.area = +d.area; //in km squared
