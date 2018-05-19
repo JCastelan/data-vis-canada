@@ -37,7 +37,7 @@ defaultData();
 
 function defaultData(){
 //Load in population data
-d3.csv("canadaPopulation2016simple.csv", function( data) {
+d3.csv("CanadaPopulation2016simple.csv", function(data) {
     svg.selectAll("path").remove();
     document.getElementById("title").innerHTML = "Canada Population Density, 2016";
     data.forEach( function(d){
